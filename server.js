@@ -18,13 +18,19 @@ const expressStatusMonitor = require('express-status-monitor');
 const expressValidator = require('express-validator');
 const lusca = require('lusca');
 const errorHandler = require('errorhandler');
+const passport = require('passport');
 
 /* Load environment variables */
 dotenv.load({ path: '.env' });
 
-/* Controllers (RouteHandlers) */
+/* Controllers (RouteHandlers) Main */
+const mainController = require('./app/main');
+
+/* Controllers (RouteHandlers) API */
 const baseController = require('./app/api/base');
 
+/* API keys and Passport configuration */
+const passportConfig = require('./config/passport');
 
 /* Express Application */
 const app = express();
@@ -60,8 +66,10 @@ app.use(session({
     clear_interval: 3600
   })
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(flash());
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
   if (req.path === '/api/upload') {
     next();
   } else {
@@ -70,6 +78,7 @@ app.use((req, res, next) => {
 });
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
+*/
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
@@ -90,8 +99,16 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, 'static'), { maxAge: 31557600000 }));
 
+/* Splash, login and sign up routes */
+app.get('/', mainController.index);
+app.get('/login', mainController.getLogin);
+app.post('/login', mainController.postLogin);
+app.get('/logout', mainController.logout);
+app.get('/signup', mainController.getSignup);
+app.post('/signup', mainController.postSignup);
+
 /* API Routes */
-app.get('/api/v1', baseController.index);
+app.get('/api/v1', passportConfig.isAuthenticated, baseController.index);
 
 /* Error Handler */
 app.use(errorHandler());
