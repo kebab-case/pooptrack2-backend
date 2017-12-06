@@ -22,6 +22,10 @@ const errorHandler = require('errorhandler');
 /* Load environment variables */
 dotenv.load({ path: '.env' });
 
+/* Controllers (RouteHandlers) */
+const baseController = require('./app/api/base');
+
+
 /* Express Application */
 const app = express();
 
@@ -84,7 +88,10 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use(express.static(path.join(__dirname, 'static'), { maxAge: 31557600000 }));
+
+/* API Routes */
+app.get('/api/v1', baseController.index);
 
 /* Error Handler */
 app.use(errorHandler());
