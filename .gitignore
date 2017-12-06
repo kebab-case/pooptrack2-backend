@@ -1,3 +1,5 @@
+# Don't allow .env to be shown, contains configuration options
+.env
 
 # Created by https://www.gitignore.io/api/node,windows,webstorm,sublimetext,visualstudio,visualstudiocode
 
