@@ -110,6 +110,16 @@ app.post('/signup', mainController.postSignup);
 /* API Routes */
 app.get('/api/v1', passportConfig.isAuthenticated, baseController.index);
 
+/* Wildcard route for invalid API calls */
+app.get('/api/v1*', (req, res) => {
+  res.redirect('/api/v1/');
+});
+
+/* Wildcard route for invalid URLs */
+app.get('*', (req, res) => {
+  res.redirect('/');
+});
+
 /* Error Handler */
 app.use(errorHandler());
 
