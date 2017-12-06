@@ -17,6 +17,7 @@ const chalk = require('chalk');
 const expressStatusMonitor = require('express-status-monitor');
 const expressValidator = require('express-validator');
 const lusca = require('lusca');
+const errorHandler = require('errorhandler');
 
 /* Load environment variables */
 dotenv.load({ path: '.env' });
@@ -84,6 +85,9 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+
+/* Error Handler */
+app.use(errorHandler());
 
 /* Start the Express server */
 app.listen(app.get('port'), () => {
